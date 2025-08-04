@@ -1,0 +1,9 @@
+{
+  "name": "portfolio-ai-chat",
+  "version": "1.0.0",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.12"
+  }
+}
