@@ -1,0 +1,108 @@
+:root {
+  --green: #45ffad;
+  --cyan: #64f9f3;
+  --light-green: #a8ffdb;
+  --purple: #a97fff;
+  --violet: #7a6ff0;
+  --bg: #181d23;
+  --text: #f1f1f1;
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg), var(--violet), var(--green));
+  color: var(--text);
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  margin: 0; padding: 0;
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  padding: 3rem 1rem 2rem 1rem;
+  background: linear-gradient(90deg, var(--green), var(--cyan), var(--violet));
+  color: #222;
+  border-bottom-left-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  box-shadow: 0 2px 16px 0 rgba(100,249,243,0.10);
+}
+
+header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+header p { font-size: 1.25rem; }
+
+.portfolio, .chatbot {
+  margin: 2rem auto;
+  max-width: 600px;
+  background: rgba(168,255,219, 0.07);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(34, 193, 195, 0.2);
+}
+
+.portfolio ul {
+  padding-left: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.chatbot h2 { margin-top: 0; }
+
+.chat-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chatbot select, .chatbot input, .chatbot button {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+.chatbot input {
+  flex: 1 1 auto;
+  background: var(--light-green);
+  color: #222;
+}
+
+.chatbot button {
+  background: var(--purple);
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  border: none;
+}
+.chatbot button:hover {
+  background: var(--green);
+  color: #222;
+}
+
+#chatDisplay {
+  margin-top: 1rem;
+  max-height: 320px;
+  overflow-y: auto;
+  background: rgba(100,249,243,0.08);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 1.1rem;
+}
+
+#chatDisplay .msg {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+#chatDisplay .user { color: var(--green); }
+#chatDisplay .bot { color: var(--violet); }
+#chatDisplay .image { margin: 1rem 0; }
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  color: #fff;
+  background: linear-gradient(90deg, var(--purple), var(--cyan));
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  margin-top: 2rem;
+}
