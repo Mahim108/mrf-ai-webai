@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mahim108 | Portfolio & AI Chat</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+:root {
+  --green: #45ffad;
+  --cyan: #64f9f3;
+  --light-green: #a8ffdb;
+  --purple: #a97fff;
+  --violet: #7a6ff0;
+  --bg: #181d23;
+  --text: #f1f1f1;
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg), var(--violet), var(--green));
+  color: var(--text);
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  margin: 0; padding: 0;
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  padding: 3rem 1rem 2rem 1rem;
+  background: linear-gradient(90deg, var(--green), var(--cyan), var(--violet));
+  color: #222;
+  border-bottom-left-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  box-shadow: 0 2px 16px 0 rgba(100,249,243,0.10);
+}
+
+header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+header p { font-size: 1.25rem; }
+
+.portfolio, .chatbot {
+  margin: 2rem auto;
+  max-width: 600px;
+  background: rgba(168,255,219, 0.07);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(34, 193, 195, 0.2);
+}
+
+.portfolio ul {
+  padding-left: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.chatbot h2 { margin-top: 0; }
+
+.chat-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chatbot select, .chatbot input, .chatbot button {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+.chatbot input {
+  flex: 1 1 auto;
+  background: var(--light-green);
+  color: #222;
+}
+
+.chatbot button {
+  background: var(--purple);
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  border: none;
+}
+.chatbot button:hover {
+  background: var(--green);
+  color: #222;
+}
+
+#chatDisplay {
+  margin-top: 1rem;
+  max-height: 320px;
+  overflow-y: auto;
+  background: rgba(100,249,243,0.08);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 1.1rem;
+}
+
+#chatDisplay .msg {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+#chatDisplay .user { color: var(--green); }
+#chatDisplay .bot { color: var(--violet); }
+#chatDisplay .image { margin: 1rem 0; }
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  color: #fff;
+  background: linear-gradient(90deg, var(--purple), var(--cyan));
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  margin-top: 2rem;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Mahim108</h1>
+    <p>Full Stack Developer | AI Enthusiast</p>
+  </header>
+  <section class="portfolio">
+    <h2>Projects</h2>
+    <ul>
+      <li>
+        <strong>MRF Portfolio 2</strong> &mdash; <a href="https://mahim108.github.io/mrf-portfolio-2/" target="_blank">Demo</a>
+      </li>
+      <!-- Add more projects here -->
+    </ul>
+  </section>
+  <section class="chatbot">
+    <h2>AI Chatbot & Image Generator</h2>
+    <div class="chat-controls">
+      <select id="apiSelector">
+        <option value="openai">OpenAI GPT-4o</option>
+        <option value="dalle">OpenAI DALL·E 3 (Image)</option>
+        <option value="anthropic">Claude 3 Opus</option>
+        <option value="gemini">Google Gemini 1.5 Pro</option>
+        <option value="stability">Stable Diffusion (Image)</option>
+      </select>
+      <input type="text" id="userInput" placeholder="Ask or describe an image..." autocomplete="off" />
+      <button id="sendBtn">Send</button>
+    </div>
+    <div id="chatDisplay"></div>
+  </section>
+  <footer>
+    <p>&copy; 2025 Mahim108</p>
+  </footer>
+  <script>
+const chatDisplay = document.getElementById('chatDisplay');
+const userInput = document.getElementById('userInput');
+const apiSelector = document.getElementById('apiSelector');
+const sendBtn = document.getElementById('sendBtn');
+
+// Send message on button click or Enter key
+sendBtn.onclick = sendMessage;
+userInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+function appendChat(sender, text, isImage = false) {
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'msg ' + (sender === 'You' ? 'user' : (isImage ? 'image' : 'bot'));
+  if (isImage) {
+    msgDiv.innerHTML = `<strong>${sender}:</strong><br><img src="${text}" style="max-width:90%;border-radius:0.75rem;box-shadow:0 2px 12px #0003;" alt="AI Image"/>`;
+  } else {
+    msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+  }
+  chatDisplay.appendChild(msgDiv);
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
+}
+
+function removeLastChat() {
+  if (chatDisplay.lastChild) chatDisplay.removeChild(chatDisplay.lastChild);
+}
+
+async function sendMessage() {
+  const input = userInput.value.trim();
+  const api = apiSelector.value;
+  if (!input) return;
+
+  appendChat('You', input);
+  userInput.value = '';
+  appendChat('Bot', '<span style="opacity:0.7">...thinking...</span>');
+
+  try {
+    const res = await fetch('/.netlify/functions/chatproxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: input, api })
+    });
+    const data = await res.json();
+    removeLastChat();
+
+    if (data.image_url) {
+      appendChat('Bot', data.image_url, true);
+    }
+    if (data.reply) {
+      appendChat('Bot', data.reply);
+    }
+    if (!data.reply && !data.image_url) {
+      appendChat('Bot', 'Sorry, something went wrong.');
+    }
+  } catch (err) {
+    removeLastChat();
+    appendChat('Bot', 'Error: Unable to contact server.');
+  }
+}
+  </script>
+</body>
+</html>
